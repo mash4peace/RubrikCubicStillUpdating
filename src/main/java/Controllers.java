@@ -15,15 +15,19 @@ public class Controllers {
 
     private void startApp() {
         db = new DB();
-        db.createTables();
+        db.createTable();
         ArrayList<Rubric> allInfo = db.fetchAllRecords();
-        gui = new RubrickCubicGUI(this);
+        gui = new RubrickCubicGUI(this, allInfo);
     }
-    void addRecord(Rubric newRubric) {
 
+    void addRecord(Rubric newRubric) {
         db.addRecord(newRubric);
     }
+
     ArrayList<Rubric>getAllInfo() {return db.fetchAllRecords();}
 
-   
+
+    public void updateTime(Rubric rub) {
+        db.updateTime(rub);
+    }
 }

@@ -21,7 +21,8 @@ public class RubrickCubicGUI extends JFrame {
     private Controllers  cntrol;
 
 
-    RubrickCubicGUI(Controllers controllers){
+
+    RubrickCubicGUI(Controllers controllers, ArrayList<Rubric> allRubics){
         this.cntrol = controllers;
         setTitle("Rubric Players !!!");
 
@@ -33,6 +34,11 @@ public class RubrickCubicGUI extends JFrame {
 
 
         playersListModel = new DefaultListModel<>();
+
+        for (Rubric r : allRubics) {
+            playersListModel.addElement(r);
+        }
+
         platersJlist.setModel(playersListModel);
         platersJlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -69,33 +75,30 @@ public class RubrickCubicGUI extends JFrame {
                 timetextField.setText("");
             }
         });
+
+
         editTimeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<Rubric> allData = cntrol.getAllInfo();
-                for(Rubric rb : allData)    {
-                    playersListModel.addElement(rb);
-
-                }
+//                for(Rubric rb : allData)    {
+//                   // playersListModel.addElement(rb);
+//
+//                }
                if(!(platersJlist.isSelectionEmpty()))   {
-                    Rubric rb = (Rubric) platersJlist.getSelectedValue();
+                    Rubric rb =  platersJlist.getSelectedValue();
                    double time = Double.parseDouble(JOptionPane.showInputDialog(RubrickCubicGUI.this,
                             "Please enter a new time record"));
                    String name = rb.name;
                    Rubric rub = new Rubric(name, time) ;
                    playersListModel.removeElement(rb);
                    playersListModel.addElement(rub);
+                   // Send controller a message to update the database with the new time for the Rubics object.
+
+                   controllers.updateTime(rub);
 
                 }
                                                                                             
-
-
-
-
-
-
-                
-            
             }
 
         });
