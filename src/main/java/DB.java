@@ -9,8 +9,8 @@ public class DB {
     private static final String DB_CONNECTION_URL =
             "jdbc:mysql://localhost:3306/geography";     //Connection string – where's the database?
 
-    private static final String USER = ("mash4peace");   //TODO replace with your username
-    private static final String PASSWORD = System.getenv("MYSQL_pw");   //TODO replace with your password
+    private static final String USER = ("clara");   //TODO replace with your username
+    private static final String PASSWORD = System.getenv("MYSQL_PW");   //TODO replace with your password
     private static final String TABLE_NAME = "cube";
     private static final String PLAYER_COL = "name";
     private static final String TIME_COL = "time";
@@ -43,12 +43,13 @@ public class DB {
             //Don't do this with variables with data from the user!! That's what ParameterisedStatements are, and that's for queries, updates etc. , not creating tables.
             // You shouldn't make database schemas from user input anyway.
             String createTableSQLTemplate =
-                    "CREATE TABLE IF NOT EXISTS %s (% s id VarCHAR(36) NOT NULL AUTO_INCREMENT ,%s VARCHAR (100), %s " +
-                            "DOUBLE, PRIMARY KEY(id)";
-            String createTableSQL = String.format(createTableSQLTemplate, TABLE_NAME, ID_COl, PLAYER_COL, TIME_COL);
+                    "CREATE TABLE IF NOT EXISTS %s (%s INTEGER NOT NULL AUTO_INCREMENT, %s VARCHAR (100), %s " +
+                            "DOUBLE, PRIMARY KEY(%s))";
+            String createTableSQL = String.format(createTableSQLTemplate, TABLE_NAME, ID_COl, PLAYER_COL, TIME_COL, ID_COl);
+            System.out.println(createTableSQL);
 
             statement.executeUpdate(createTableSQL);
-            System.out.println("Created elevations table");
+            System.out.println("Created Cubes table");
 
             statement.close();
             conn.close();
@@ -64,7 +65,7 @@ public class DB {
 
         try (Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD)) {
 
-            String addElevationSQL = "INSERT INTO " + TABLE_NAME + " VALUES ( ? , ? ) " ;
+            String addElevationSQL = String.format("INSERT INTO " + TABLE_NAME + "(%s , %s)  VALUES ( ? , ? ) ", PLAYER_COL, TIME_COL) ;
             PreparedStatement addRubricPS = conn.prepareStatement(addElevationSQL);
             addRubricPS.setString(1,rb.name);
 
@@ -120,26 +121,31 @@ public class DB {
 
     }
 
-
-    public void createTables() {
-        try(Connection cnn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
-        Statement s = cnn.createStatement()){
-            String createTableSQLTemplate =
-                    "CREATE TABLE IF NOT EXISTS %s (%s VARCHAR (100), %s " +
-                            "DOUBLE)";
-            String createTableSQL = String.format(createTableSQLTemplate, TABLE_NAME, PLAYER_COL, TIME_COL);
-
-            s.executeUpdate(createTableSQL);
-            System.out.println("Created elevations table");
-
-            s.close();
-            cnn.close();
-
-        }catch (SQLException sql ){
-            sql.printStackTrace();
-            sql.getCause();
-
-        }
+    public void updateTime(Rubric rub) {
+        // todo : update the record for rub.name with the new time.
 
     }
+
+
+//    public void createTables() {
+//        try(Connection cnn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
+//        Statement s = cnn.createStatement()){
+//            String createTableSQLTemplate =
+//                    "CREATE TABLE IF NOT EXISTS %s (%s VARCHAR (100), %s " +
+//                            "DOUBLE)";
+//            String createTableSQL = String.format(createTableSQLTemplate, TABLE_NAME, PLAYER_COL, TIME_COL);
+//
+//            s.executeUpdate(createTableSQL);
+//            System.out.println("Created elevations table");
+//
+//            s.close();
+//            cnn.close();
+//
+//        }catch (SQLException sql ){
+//            sql.printStackTrace();
+//            sql.getCause();
+//
+//        }
+//
+//    }
 }
